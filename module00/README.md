@@ -37,13 +37,13 @@ Throughout this module, I have mastered the following Python pillars:
 | Directory | Exercise | Core Concept |
 | :--- | :--- | :--- |
 | `ex0/` | Hello Garden | Function Definition & Output |
-| `ex1/` | Garden Plot Area | Inputs & Integer Casting |
-| `ex2/` | Harvest Total | Arithmetic Processing |
-| `ex3/` | Plant Age Check | Basic Conditional Logic |
-| `ex4/` | Water Reminder | Multi-path Decision Making |
-| `ex5/` | Count to Harvest | Iterative vs. Recursive Loops |
-| `ex6/` | Garden Summary | String Formatting |
-| `ex7/` | Seed Inventory | Type Hints & f-strings |
+| `ex1/` | Garden Name | Inputs & Integer Casting |
+| `ex2/` | Garden Plot Area | Inputs & Integer Casting |
+| `ex3/` | Harvest Total | Arithmetic Processing |
+| `ex4/` | Plant Age Check | Basic Conditional Logic |
+| `ex5/` | Water Reminder | Multi-path Decision Making |
+| `ex6/` | Count to Harvest | Iterative vs. Recursive Loops |
+| `ex7/` | Seed Inventory with Type Annotations | Type Hints & f-strings |
 
 ---
 
