@@ -1,25 +1,26 @@
 class Plant:
-	def __init__(self, name: str, height: int, age: int):
-		self.name = name
-		self.height = height
-		self.age = age
+    def __init__(self, name: str, height: float, age: int):
+        self.name = name.capitalize()
+        self.height = float(height)
+        self.age = age
 
-def ft_plant_factory():
+    def show(self) -> str:
+        return f"{self.name}: {self.height:.1f}cm, {self.age} days old"
 
-	plants = [
-		Plant("Rose", 25, 30),
-		Plant("0ak", 200, 365),
-		Plant("Cactus", 5, 90),
-		Plant("Sunflower", 80, 45),
-		Plant("Fern", 15, 120)
-	]
 
-	print("=== Plant Factory Output ===")
+def ft_plant_factory() -> None:
+    plants = [
+        Plant("Rose", 25.0, 30),
+        Plant("Oak", 200.0, 365),
+        Plant("Cactus", 5.0, 90),
+        Plant("Sunflower", 80.0, 45),
+        Plant("Fern", 15.0, 120),
+    ]
 
-	for p in plants:
-		print(f"Created: {p.name} ({p.height}cm, {p.age})")
+    print("=== Plant Factory Output ===")
+    for p in plants:
+        print(f"Created: {p.show()}")
 
-	print(f"Total plants created: {len(plants)}")
 
 if __name__ == "__main__":
-	ft_plant_factory()
+    ft_plant_factory()
