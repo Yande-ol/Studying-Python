@@ -1,14 +1,19 @@
 def input_temperature(temp_str: str) -> int:
-    """Converte a string de temperatura para inteiro.
+    """Converte e valida temperatura; levanta ValueError para fora de faixa.
 
-    Levanta o erro de conversão se a string não for um número válido.
+    Faixa aceitável: 0 a 40 graus inclusive.
     """
-    return int(temp_str)
+    temp: int = int(temp_str)
+    if temp < 0:
+        raise ValueError(f"{temp}°C is too cold for plants (min 0°C)")
+    if temp > 40:
+        raise ValueError(f"{temp}°C is too hot for plants (max 40°C)")
+    return temp
 
 
 def test_temperature() -> None:
-    print("=== Garden Temperature ===")
-    test_cases: list[str] = ["25", "abc"]
+    print("=== Garden Temperature Checker ===")
+    test_cases: list[str] = ["25", "abc", "100", "-50"]
     for case in test_cases:
         print(f"Input data is'{case}'")
         try:
