@@ -1,6 +1,6 @@
-class SecurePlant:
+class Plant:
     def __init__(self, name: str, height: float = 0.0, age: int = 0):
-        self.name = name.capitalize()
+        self._name = name.capitalize()
         # protected attributes
         self._height = float(0.0)
         self._age = int(0)
@@ -8,21 +8,34 @@ class SecurePlant:
         # initialize with validation
         if height >= 0:
             self._height = float(height)
+        else:
+            print(f"{self._name}: Error, height can't be negative")
+            print("Plant created with default height")
         if age >= 0:
             self._age = int(age)
+        else:
+            print(f"{self._name}: Error, age can't be negative")
+            print("Plant created with default age")
+
+    def get_name(self) -> str:
+        return self._name
 
     def set_height(self, value: float) -> None:
         if value < 0:
-            print(f"{self.name}: Error, height can't be negative")
+            print(f"{self._name}: Error, height can't be negative")
             print("Height update rejected")
         else:
             self._height = float(value)
-            val = int(value) if value.is_integer() else value
-            print(f"Height updated: {val}cm")
+            numeric_value = float(value)
+            if numeric_value.is_integer():
+                formatted_value = str(int(numeric_value))
+            else:
+                formatted_value = str(numeric_value)
+            print(f"Height updated: {formatted_value}cm")
 
     def set_age(self, value: int) -> None:
         if value < 0:
-            print(f"{self.name}: Error, age can't be negative")
+            print(f"{self._name}: Error, age can't be negative")
             print("Age update rejected")
         else:
             self._age = int(value)
@@ -35,12 +48,12 @@ class SecurePlant:
         return self._age
 
     def show(self) -> None:
-        print(f"{self.name}: {self._height:.1f}cm, {self._age} days old")
+        print(f"{self._name}: {self._height:.1f}cm, {self._age} days old")
 
 
 def ft_garden_security() -> None:
     print("=== Garden Security System ===")
-    rose = SecurePlant("Rose", 15.0, 10)
+    rose = Plant("Rose", 15.0, 10)
     print("Plant created:", end=" ")
     rose.show()
 
