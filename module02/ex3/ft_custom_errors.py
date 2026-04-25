@@ -1,19 +1,22 @@
+from typing import Optional
+
+
 class GardenError(Exception):
-    def __init__(self, message: str | None = None) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         if message is None:
             message = "Unknown garden error"
         super().__init__(message)
 
 
 class PlantError(GardenError):
-    def __init__(self, message: str | None = None) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         if message is None:
             message = "Unknown plant error"
         super().__init__(message)
 
 
 class WaterError(GardenError):
-    def __init__(self, message: str | None = None) -> None:
+    def __init__(self, message: Optional[str] = None) -> None:
         if message is None:
             message = "Unknown water error"
         super().__init__(message)

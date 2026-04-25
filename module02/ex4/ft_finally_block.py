@@ -1,8 +1,16 @@
-class PlantError(Exception):
-    def __init__(self, message: str | None = None) -> None:
-        if message is None:
-            message = "Invalid plant name"
-        super().__init__(message)
+from typing import TYPE_CHECKING, Optional
+
+if TYPE_CHECKING:
+    from ex3.ft_custom_errors import PlantError  # type: ignore
+else:
+    try:
+        from ex3.ft_custom_errors import PlantError  # type: ignore
+    except Exception:
+        class PlantError(Exception):
+            def __init__(self, message: Optional[str] = None) -> None:
+                if message is None:
+                    message = "Invalid plant name"
+                super().__init__(message)
 
 
 def water_plant(plant_name: str) -> None:
