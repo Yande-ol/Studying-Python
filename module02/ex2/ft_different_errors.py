@@ -30,7 +30,7 @@ def test_error_types() -> None:
         except TypeError as e:
             print(f"Caught TypeError: {e}")
         else:
-            print("Operation completed successfully")
+            print("Operation completed successfully\n")
     print("All error types tested successfully!")
 
 

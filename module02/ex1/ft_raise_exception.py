@@ -12,15 +12,15 @@ def input_temperature(temp_str: str) -> int:
 
 
 def test_temperature() -> None:
-    print("=== Garden Temperature Checker ===")
+    print("=== Garden Temperature Checker ===\n")
     test_cases: list[str] = ["25", "abc", "100", "-50"]
     for case in test_cases:
-        print(f"Input data is'{case}'")
+        print(f"Input data is '{case}'")
         try:
             temp = input_temperature(case)
-            print(f"Temperature is now {temp}°C")
+            print(f"Temperature is now {temp}°C\n")
         except Exception as e:
-            print(f"Caught input_temperature error: {e}")
+            print(f"Caught input_temperature error: {e}\n")
     print("All tests completed - program didn't crash!")
 
 
