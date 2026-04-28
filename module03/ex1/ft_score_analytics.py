@@ -2,32 +2,30 @@ import sys
 
 
 def analyze_scores() -> None:
-    argc: int = len(sys.argv)
-
     print("=== Player Score Analytics ===")
 
-    if argc < 2:
-        print("No scores provided."
-              "Usage: python3 ft_score_analytics.py <score1> <score2> ...")
-        return
-
     scores: list[int] = []
-
-    try:
-        for i in range(1, argc):
-            value = int(sys.argv[i])
+    i: int = 1
+    while i < len(sys.argv):
+        value_text: str = sys.argv[i]
+        try:
+            value: int = int(value_text)
             scores.append(value)
+        except ValueError:
+            print(f"Invalid parameter: '{value_text}'")
+        i += 1
 
-    except ValueError:
-        print("Error: All arguments must be numeric scores (integers).")
+    if len(scores) == 0:
+        print("No scores provided. Usage: python3 ft_score_analytics.py "
+              "<score1> <score2> ...")
         return
 
-    total_players = len(scores)
-    total_sum = sum(scores)
-    avg = total_sum / total_players
+    total_players: int = len(scores)
+    total_sum: int = sum(scores)
+    avg: float = total_sum / total_players
 
-    high = max(scores)
-    low = min(scores)
+    high: int = max(scores)
+    low: int = min(scores)
     print(f"Scores processed: {scores}")
     print(f"Total players: {total_players}")
     print(f"Total score: {total_sum}")

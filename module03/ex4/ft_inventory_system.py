@@ -2,67 +2,69 @@ import sys
 
 
 def manage_inventory() -> None:
-    raw_items = sys.argv[1:]
+    raw_items: list[str] = sys.argv[1:]
 
     print("=== Inventory System Analysis ===")
 
     if not raw_items:
-        print("No items provided. Usage: python3"
-              "ft_inventory_system.py item:qty item:qty ...")
+        print("No inventory provided. Usage: python3 "
+              "ft_inventory_system.py <item:quantity> ...")
         return
 
     inventory: dict[str, int] = {}
 
     for entry in raw_items:
+        parts: list[str] = entry.split(":")
+        if len(parts) != 2 or parts[0] == "" or parts[1] == "":
+            print(f"Error - invalid parameter '{entry}'")
+            continue
+
+        name: str = parts[0]
+        qty_text: str = parts[1]
+        if name in inventory:
+            print(f"Redundant item '{name}' - discarding")
+            continue
+
         try:
-            name, qty = entry.split(":")
-            inventory[name] = int(qty)
-        except (ValueError, IndexError):
-            print(f"Skipping invalid entry: {entry}")
+            inventory[name] = int(qty_text)
+        except ValueError as err:
+            print(f"Quantity error for '{name}': {err}")
 
-    total_units = sum(inventory.values())
-    unique_types = len(inventory)
+    if len(inventory) == 0:
+        print("No valid items found in inventory.")
+        return
 
-    most_abundant = max(inventory, key=inventory.get)
-    least_abundant = min(inventory, key=inventory.get)
+    print(f"Got inventory: {inventory}")
 
-    print(f"Total items in inventory: {total_units}")
-    print(f"Unique item types: {unique_types}")
+    items_list: list[str] = list(inventory.keys())
+    print(f"Item list: {items_list}")
 
-    print("\n=== Current Inventory ===")
-    sorted_inventory = dict(sorted(inventory.items(),
-                                   key=lambda x: x[1], reverse=True)) # importante para organização.
-    for item, qty in sorted_inventory.items():
-        percentage = (qty / total_units) * 100
-        print(f"{item}: {qty} units ({percentage:.1f}%)")
-
-    print("\n=== Inventory Statistics ===")
-    print(f"Most abundant: {most_abundant} ({inventory[most_abundant]} units)")
-    print(
-        f"Least abundant: {least_abundant} "
-        f"({inventory[least_abundant]} unit)"
-    )
-
-    categories = {"Moderate": {}, "Scarce": {}}
+    total_units: int = sum(inventory.values())
+    print(f"Total quantity of the {len(inventory)} items: {total_units}")
 
     for item, qty in inventory.items():
-        if qty >= 5:
-            categories["Moderate"][item] = qty
-        else:
-            categories["Scarce"][item] = qty
+        percentage: float = round((qty / total_units) * 100, 1)
+        print(f"Item {item} represents {percentage:.1f}%")
 
-    print("\n=== Item Categories ===")
-    print(f"Moderate: {categories['Moderate']}")
-    print(f"Scarce: {categories['Scarce']}")
+    most_item: str = items_list[0]
+    least_item: str = items_list[0]
+    for item in items_list:
+        if inventory[item] > inventory[most_item]:
+            most_item = item
+        if inventory[item] < inventory[least_item]:
+            least_item = item
 
-    restock = [item for item, qty in inventory.items() if qty == 1]
-    print("\n=== Management Suggestions ===")
-    print(f"Restock needed: {', '.join(restock)}")
+    print(
+        "Item most abundant: "
+        f"{most_item} with quantity {inventory[most_item]}"
+    )
+    print(
+        "Item least abundant: "
+        f"{least_item} with quantity {inventory[least_item]}"
+    )
 
-    print("\n=== Dictionary Properties Demo ===")
-    print(f"Dictionary keys: {', '.join(inventory.keys())}")
-    print(f"Dictionary values: {', '.join(map(str, inventory.values()))}")
-    print(f"Sample lookup - 'sword' in inventory: {'sword' in inventory}")
+    inventory.update({"magic_item": 1})
+    print(f"Updated inventory: {inventory}")
 
 
 if __name__ == "__main__":
