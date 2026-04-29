@@ -1,2 +1,0 @@
-Quantum encryption keys recovered
-Integrity check: 0xFF42A
