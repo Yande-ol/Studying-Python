@@ -29,7 +29,7 @@ def gen_player_achievements() -> set[str]:
 
 
 def track_achievements() -> None:
-    print("=== Achievement Tracker System ===")
+    print("=== Achievement Tracker System ===\n")
 
     player_names: list[str] = ["Alice", "Bob", "Charlie", "Dylan"]
     player_sets: list[set[str]] = []
@@ -42,12 +42,12 @@ def track_achievements() -> None:
     all_distinct: set[str] = set()
     for current_set in player_sets:
         all_distinct = all_distinct.union(current_set)
-    print(f"All distinct achievements: {all_distinct}")
+    print(f"\nAll distinct achievements: {all_distinct}")
 
     common_achievements: set[str] = player_sets[0]
     for current_set in player_sets[1:]:
         common_achievements = common_achievements.intersection(current_set)
-    print(f"Common achievements: {common_achievements}")
+    print(f"\nCommon achievements: {common_achievements}\n")
 
     index: int = 0
     while index < len(player_names):
@@ -63,7 +63,7 @@ def track_achievements() -> None:
         only_this_player: set[str] = player_sets[index].difference(
             other_achievements
         )
-        print(f"Only {player_names[index]} has: {only_this_player}")
+        print(f"Only {player_names[index]} has: {only_this_player}\n")
         index += 1
 
     full_achievements: set[str] = set(ACHIEVEMENTS_POOL)
