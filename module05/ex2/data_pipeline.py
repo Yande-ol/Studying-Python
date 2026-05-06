@@ -74,7 +74,10 @@ class LogProcessor(DataProcessor):
         def valid_entry(d: Any) -> bool:
             if not isinstance(d, dict):
                 return False
-            return all(isinstance(k, str) and isinstance(v, str) for k, v in d.items())
+            return all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in d.items()
+            )
 
         if isinstance(data, dict):
             return valid_entry(data)
@@ -85,9 +88,10 @@ class LogProcessor(DataProcessor):
     def ingest(self, data: Union[dict, List[dict]]) -> None:
         if not self.validate(data):
             raise ValueError("Improper log data")
+
         def format_entry(d: dict) -> str:
-            level = d.get('log_level', '')
-            message = d.get('log_message', '')
+            level: str = d.get('log_level', '')
+            message: str = d.get('log_message', '')
             return f"{level}: {message}"
 
         if isinstance(data, list):
@@ -102,7 +106,9 @@ class LogProcessor(DataProcessor):
 
 
 class ExportPlugin(Protocol):
-    def process_output(self, data: List[Tuple[int, str]]) -> None:  # pragma: no cover - protocol
+    def process_output(
+        self, data: List[Tuple[int, str]]
+    ) -> None:  # pragma: no cover - protocol
         ...
 
 
@@ -120,15 +126,16 @@ class JSONExportPlugin:
     def process_output(self, data: List[Tuple[int, str]]) -> None:
         if not data:
             return
-        items = sorted(data, key=lambda x: x[0])
+        items: List[Tuple[int, str]] = sorted(data, key=lambda x: x[0])
         parts: List[str] = []
         for rank, val in items:
-            escaped = val.replace('"', '\\"').replace('\n', '\\n')
+            escaped: str = val.replace('"', '\\"').replace(
+                '\n', '\\n'
+            )
             parts.append(f'"item_{rank}": "{escaped}"')
         print("JSON Output:")
         print("{" + ", ".join(parts) + "}")
         print()
-
 
 
 class DataStream:
@@ -151,7 +158,10 @@ class DataStream:
                     handled = True
                     break
             if not handled:
-                print(f"DataStream error - Can't process element in stream: {element}")
+                print(
+                    f"DataStream error - Can't process element in "
+                    f"stream: {element}"
+                )
 
     def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
         for proc in self._processors:
@@ -171,9 +181,14 @@ class DataStream:
             print("No processor found, no data")
             return
         for proc in self._processors:
-            remaining = len(getattr(proc, '_storage', []))
-            name = proc.__class__.__name__.replace('Processor', ' Processor')
-            print(f"{name}: total {proc.total_processed} items processed, remaining {remaining} on processor")
+            remaining: int = len(getattr(proc, '_storage', []))
+            name: str = proc.__class__.__name__.replace(
+                'Processor', ' Processor'
+            )
+            print(
+                f"{name}: total {proc.total_processed} items "
+                f"processed, remaining {remaining} on processor"
+            )
 
 
 if __name__ == "__main__":
@@ -192,8 +207,14 @@ if __name__ == "__main__":
         'Hello world',
         [3.14, -1, 2.71],
         [
-            {'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
-            {'log_level': 'INFO', 'log_message': 'User wil is connected'},
+            {
+                'log_level': 'WARNING',
+                'log_message': 'Telnet access! Use ssh instead',
+            },
+            {
+                'log_level': 'INFO',
+                'log_message': 'User wil is connected',
+            },
         ],
         42,
         ['Hi', 'five'],
@@ -210,8 +231,14 @@ if __name__ == "__main__":
         21,
         ['I love AI', 'LLMs are wonderful', 'Stay healthy'],
         [
-            {'log_level': 'ERROR', 'log_message': '500 server crash'},
-            {'log_level': 'NOTICE', 'log_message': 'Certificate expires in 10 days'},
+            {
+                'log_level': 'ERROR',
+                'log_message': '500 server crash',
+            },
+            {
+                'log_level': 'NOTICE',
+                'log_message': 'Certificate expires in 10 days',
+            },
         ],
         [32, 42, 64, 84, 128, 168],
         'World hello',
@@ -223,4 +250,3 @@ if __name__ == "__main__":
     print("\nSend 5 processed data from each processor to a JSON plugin:")
     ds.output_pipeline(5, jsonp)
     ds.print_processors_stats()
- 

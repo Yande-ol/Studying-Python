@@ -74,7 +74,10 @@ class LogProcessor(DataProcessor):
         def valid_entry(d: Any) -> bool:
             if not isinstance(d, dict):
                 return False
-            return all(isinstance(k, str) and isinstance(v, str) for k, v in d.items())
+            return all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in d.items()
+            )
 
         if isinstance(data, dict):
             return valid_entry(data)
@@ -85,10 +88,11 @@ class LogProcessor(DataProcessor):
     def ingest(self, data: Union[dict, List[dict]]) -> None:
         if not self.validate(data):
             raise ValueError("Improper log data")
+
         def format_entry(d: dict) -> str:
             # Expecting keys like 'log_level' and 'log_message'
-            level = d.get('log_level', '')
-            message = d.get('log_message', '')
+            level: str = d.get('log_level', '')
+            message: str = d.get('log_message', '')
             return f"{level}: {message}"
 
         if isinstance(data, list):

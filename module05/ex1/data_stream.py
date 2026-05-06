@@ -74,7 +74,10 @@ class LogProcessor(DataProcessor):
         def valid_entry(d: Any) -> bool:
             if not isinstance(d, dict):
                 return False
-            return all(isinstance(k, str) and isinstance(v, str) for k, v in d.items())
+            return all(
+                isinstance(k, str) and isinstance(v, str)
+                for k, v in d.items()
+            )
 
         if isinstance(data, dict):
             return valid_entry(data)
@@ -85,9 +88,10 @@ class LogProcessor(DataProcessor):
     def ingest(self, data: Union[dict, List[dict]]) -> None:
         if not self.validate(data):
             raise ValueError("Improper log data")
+
         def format_entry(d: dict) -> str:
-            level = d.get('log_level', '')
-            message = d.get('log_message', '')
+            level: str = d.get('log_level', '')
+            message: str = d.get('log_message', '')
             return f"{level}: {message}"
 
         if isinstance(data, list):
@@ -118,11 +122,15 @@ class DataStream:
                         handled = True
                         break
                 except Exception:
-                    # If a processor raises during ingest, do not stop whole stream
+                    # If a processor raises during ingest,
+                    # do not stop whole stream
                     handled = True
                     break
             if not handled:
-                print(f"DataStream error - Can't process element in stream: {element}")
+                print(
+                    f"DataStream error - Can't process element in "
+                    f"stream: {element}"
+                )
 
     def print_processors_stats(self) -> None:
         print("== DataStream statistics ==")
@@ -130,9 +138,14 @@ class DataStream:
             print("No processor found, no data")
             return
         for proc in self._processors:
-            remaining = len(getattr(proc, '_storage', []))
-            name = proc.__class__.__name__.replace('Processor', ' Processor')
-            print(f"{name}: total {proc.total_processed} items processed, remaining {remaining} on processor")
+            remaining: int = len(getattr(proc, '_storage', []))
+            name: str = proc.__class__.__name__.replace(
+                'Processor', ' Processor'
+            )
+            print(
+                f"{name}: total {proc.total_processed} items "
+                f"processed, remaining {remaining} on processor"
+            )
 
 
 if __name__ == "__main__":
@@ -148,8 +161,14 @@ if __name__ == "__main__":
         'Hello world',
         [3.14, -1, 2.71],
         [
-            {'log_level': 'WARNING', 'log_message': 'Telnet access! Use ssh instead'},
-            {'log_level': 'INFO', 'log_message': 'User wil is connected'},
+            {
+                'log_level': 'WARNING',
+                'log_message': 'Telnet access! Use ssh instead',
+            },
+            {
+                'log_level': 'INFO',
+                'log_message': 'User wil is connected',
+            },
         ],
         42,
         ['Hi', 'five'],
@@ -165,7 +184,10 @@ if __name__ == "__main__":
     print("Send the same batch again")
     ds.process_stream(batch)
     ds.print_processors_stats()
-    print("\nConsume some elements from the data processors: Numeric 3, Text 2, Log 1")
+    print(
+        "\nConsume some elements from the data processors: "
+        "Numeric 3, Text 2, Log 1"
+    )
     # consume
     for _ in range(3):
         try:
