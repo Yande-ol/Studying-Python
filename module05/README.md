@@ -1,70 +1,70 @@
-# Module 05: Code Nexus - Polimorfismo em Fluxos de Dados
+# Module 05: Code Nexus - Polymorphism in Data Flows
 
-## 📚 Índice
-1. [Conceitos Base](#conceitos-base)
+## 📚 Index
+1. [Core Concepts](#core-concepts)
 2. [Exercise 0 - Data Processor](#exercise-0---data-processor)
 3. [Exercise 1 - Data Stream](#exercise-1---data-stream)
 4. [Exercise 2 - Data Pipeline](#exercise-2---data-pipeline)
-5. [Como Explicar na Defesa](#como-explicar-na-defesa)
+5. [How to Explain in the Defense](#how-to-explain-in-the-defense)
 
 ---
 
-## 🎯 Conceitos Base
+## 🎯 Core Concepts
 
-### O que é Polimorfismo?
-Polimorfismo significa "muitas formas". Na programação orientada a objetos, permite que **objetos diferentes respondam ao mesmo comando de formas diferentes**.
+### What is Polymorphism?
+Polymorphism means "many forms." In object-oriented programming, it allows **different objects to respond to the same command in different ways**.
 
-**Exemplo simples:**
+**Simple example:**
 ```
-Comando: "Faz som!"
-- Um cachorro faz: "Au au!"
-- Um gato faz: "Miau!"
-- Um pássaro faz: "Piu piu!"
+Command: "Make sound!"
+- A dog responds: "Woof!"
+- A cat responds: "Meow!"
+- A bird responds: "Tweet!"
 ```
 
-### O que é uma Abstract Class (ABC)?
-Uma classe abstrata é um **modelo/template** que define a interface (o contrato) que todas as subclasses devem seguir.
+### What is an Abstract Class (ABC)?
+An abstract class is a **template** that defines the interface (the contract) that all subclasses must follow.
 
 ```python
 class Animal(ABC):
     @abstractmethod
-    def fazer_som(self) -> str:
-        pass  # Não implementa, apenas declara
+    def make_sound(self) -> str:
+        pass  # Declares the method but does not implement it
 ```
 
-**Regra:** Não é possível criar uma instância de uma classe abstrata. Você PRECISA criar subclasses que implementem os métodos abstratos.
+**Rule:** You cannot instantiate an abstract class. You MUST create subclasses that implement the abstract methods.
 
 ---
 
 ## 💾 Exercise 0 - Data Processor
 
-### 🎯 Objetivo
-Criar uma arquitetura base com:
-- Uma classe abstrata `DataProcessor` (template)
-- Três subclasses especializadas (NumericProcessor, TextProcessor, LogProcessor)
-- Cada uma processa um tipo diferente de dados
+### 🎯 Goal
+Create a base architecture with:
+- An abstract class `DataProcessor` (template)
+- Three specialized subclasses (`NumericProcessor`, `TextProcessor`, `LogProcessor`)
+- Each one processes a different type of data
 
-### 📋 Estrutura Visual
+### 📋 Visual Structure
 
 ```
 ┌─────────────────────────────────────────────────────┐
-│            DataProcessor (ABSTRATA)                  │
+│            DataProcessor (ABSTRACT)                 │
 │─────────────────────────────────────────────────────│
-│  Métodos abstratos (OBRIGATÓRIO implementar):       │
+│  Abstract methods (MUST implement):                │
 │  • validate(data: Any) -> bool                      │
 │  • ingest(data: Any) -> None                        │
-│                                                      │
-│  Método concreto (IGUAL para todos):                │
+│                                                     │
+│  Concrete method (SAME for all):                    │
 │  • output() -> tuple[int, str]                      │
 └─────────────────────────────────────────────────────┘
            ↗              ↓              ↖
     NumericProcessor  TextProcessor  LogProcessor
-    (int, float)      (str)        (dict str:str)
+    (int, float)      (str)        (dict[str,str])
 ```
 
-### 🔍 Explicação Detalhada
+### 🔍 Detailed Explanation
 
-#### 1. **Classe Abstrata DataProcessor**
+#### 1. **Abstract Class DataProcessor**
 
 ```python
 from abc import ABC, abstractmethod
@@ -77,34 +77,34 @@ class DataProcessor(ABC):
 
     @abstractmethod
     def validate(self, data: Any) -> bool:
-        """Verifica se o dado é válido para este processador"""
+        """Check if the data is valid for this processor"""
         raise NotImplementedError()
 
     @abstractmethod
     def ingest(self, data: Any) -> None:
-        """Processa e armazena o dado"""
+        """Process and store the data"""
         raise NotImplementedError()
 
     def output(self) -> Tuple[int, str]:
-        """Extrai o primeiro dado armazenado"""
+        """Pop the first stored item"""
         if not self._storage:
             raise IndexError("No data to output")
         rank, value = self._storage.pop(0)
         return rank, value
 ```
 
-**O que cada coisa faz:**
-- `@abstractmethod`: marca como "OBRIGATÓRIO" nas subclasses
-- `_storage`: fila (lista) de dados armazenados
-- `_next_rank`: contador de quantos itens já foram processados
-- `total_processed`: total de itens que passaram por este processador
+What each field does:
+- `@abstractmethod`: marks methods as REQUIRED in subclasses
+- `_storage`: queue (list) of stored items
+- `_next_rank`: counter of how many items have been processed
+- `total_processed`: total number of items processed by this processor
 
 #### 2. **NumericProcessor**
 
 ```python
 class NumericProcessor(DataProcessor):
     def validate(self, data: Any) -> bool:
-        """Só aceita int, float ou listas deles"""
+        """Accepts int, float or lists of them"""
         if isinstance(data, (int, float)):
             return True
         if isinstance(data, list):
@@ -112,10 +112,10 @@ class NumericProcessor(DataProcessor):
         return False
 
     def ingest(self, data: Union[int, float, List[Union[int, float]]]) -> None:
-        """Se for lista, processa cada item; se for único, processa só ele"""
+        """If a list, process each item; if single, process it"""
         if not self.validate(data):
             raise ValueError("Improper numeric data")
-        
+
         if isinstance(data, list):
             for item in data:
                 self._storage.append((self._next_rank, str(item)))
@@ -127,42 +127,42 @@ class NumericProcessor(DataProcessor):
             self.total_processed += 1
 ```
 
-**Fluxo de um exemplo:**
+Example flow:
 ```
 np = NumericProcessor()
 np.ingest([1, 2, 3])
 
-_storage agora tem:
+# _storage now contains:
 [
-  (0, "1"),   <- rank 0
-  (1, "2"),   <- rank 1
-  (2, "3")    <- rank 2
+  (0, "1"),
+  (1, "2"),
+  (2, "3"),
 ]
 total_processed = 3
 _next_rank = 3
 ```
 
-#### 3. **TextProcessor e LogProcessor**
+#### 3. **TextProcessor and LogProcessor**
 
-Mesma lógica, mas com tipos diferentes:
+Same logic with different types:
 
-- **TextProcessor:** `validate()` aceita `str` ou `list[str]`
-- **LogProcessor:** `validate()` aceita `dict[str, str]` ou `list[dict[str, str]]`
-  - Formata como: `"NOTICE: Connection to server"`
+- **TextProcessor:** `validate()` accepts `str` or `list[str]`
+- **LogProcessor:** `validate()` accepts `dict[str, str]` or `list[dict[str, str]]`
+  - Formats logs like: `"NOTICE: Connection to server"`
 
-### 🎬 Como Funciona o Exemplo
+### 🎬 How the Example Works
 
 ```python
 np = NumericProcessor()
-print(np.validate(42))              # True
-print(np.validate("Hello"))         # False
+print(np.validate(42))        # True
+print(np.validate("Hello")) # False
 
 np.ingest([1, 2, 3, 4, 5])
-rank1, val1 = np.output()           # (0, "1")
-rank2, val2 = np.output()           # (1, "2")
+rank1, val1 = np.output()     # (0, "1")
+rank2, val2 = np.output()     # (1, "2")
 ```
 
-**Output esperado:**
+Expected output:
 ```
 Numeric value 0: 1
 Numeric value 1: 2
@@ -173,18 +173,18 @@ Numeric value 2: 3
 
 ## 📡 Exercise 1 - Data Stream
 
-### 🎯 Objetivo
-Usar **polimorfismo** para rotear diferentes tipos de dados automaticamente para o processador correto.
+### 🎯 Goal
+Use **polymorphism** to route different data types automatically to the correct processor.
 
-### 📋 Fluxo Visual
+### 📋 Visual Flow
 
 ```
 ┌──────────────────────────────────────────────────────────┐
-│              DataStream (Orquestrador)                   │
+│              DataStream (Orchestrator)                   │
 │──────────────────────────────────────────────────────────│
-│  • register_processor(proc): adiciona processador        │
-│  • process_stream(stream): roteia dados                  │
-│  • print_processors_stats(): mostra estatísticas         │
+│  • register_processor(proc): add a processor              │
+│  • process_stream(stream): route data                    │
+│  • print_processors_stats(): show statistics             │
 └──────────────────────────────────────────────────────────┘
                          │
           ┌──────────────┼──────────────┐
@@ -192,9 +192,9 @@ Usar **polimorfismo** para rotear diferentes tipos de dados automaticamente para
     NumericProcessor TextProcessor LogProcessor
 ```
 
-### 🔍 Explicação Detalhada
+### 🔍 Detailed Explanation
 
-#### 1. **Classe DataStream**
+#### 1. **DataStream Class**
 
 ```python
 class DataStream:
@@ -202,11 +202,11 @@ class DataStream:
         self._processors: List[DataProcessor] = []
 
     def register_processor(self, proc: DataProcessor) -> None:
-        """Adiciona um novo processador ao sistema"""
+        """Add a new processor to the system"""
         self._processors.append(proc)
 
     def process_stream(self, stream: list[Any]) -> None:
-        """Roteia cada elemento do stream para o processador apropriado"""
+        """Route each element of the stream to the appropriate processor"""
         for element in stream:
             handled = False
             for proc in self._processors:
@@ -214,7 +214,7 @@ class DataStream:
                     if proc.validate(element):
                         proc.ingest(element)  # type: ignore[arg-type]
                         handled = True
-                        break  # Para quando encontrar um processador compatível
+                        break
                 except Exception:
                     handled = True
                     break
@@ -222,7 +222,7 @@ class DataStream:
                 print(f"DataStream error - Can't process element in stream: {element}")
 
     def print_processors_stats(self) -> None:
-        """Mostra quantos itens cada processador tem"""
+        """Show how many items each processor has"""
         print("== DataStream statistics ==")
         for proc in self._processors:
             remaining = len(getattr(proc, '_storage', []))
@@ -230,7 +230,7 @@ class DataStream:
             print(f"{name}: total {proc.total_processed} items processed, remaining {remaining} on processor")
 ```
 
-### 🎬 Como Funciona o Polimorfismo
+### 🎬 How Polymorphism Works
 
 ```python
 ds = DataStream()
@@ -239,95 +239,95 @@ tp = TextProcessor()
 ds.register_processor(np)
 ds.register_processor(tp)
 
-# Agora vamos enviar um stream MISTOmix
+# Now send a mixed stream
 stream = [42, "Hello", [1, 2, 3], "World", [100, 200]]
 
 ds.process_stream(stream)
 ```
 
-**O que acontece passo a passo:**
+Step-by-step behavior:
 ```
-Elemento 1: 42
+Element 1: 42
 ├─ NumericProcessor.validate(42) → True ✓
 ├─ NumericProcessor.ingest(42)
-└─ Vai para NumericProcessor
+└─ Goes to NumericProcessor
 
-Elemento 2: "Hello"
+Element 2: "Hello"
 ├─ NumericProcessor.validate("Hello") → False ✗
 ├─ TextProcessor.validate("Hello") → True ✓
 ├─ TextProcessor.ingest("Hello")
-└─ Vai para TextProcessor
+└─ Goes to TextProcessor
 
-Elemento 3: [1, 2, 3]
+Element 3: [1, 2, 3]
 ├─ NumericProcessor.validate([1, 2, 3]) → True ✓
 ├─ NumericProcessor.ingest([1, 2, 3])
-└─ Vai para NumericProcessor
+└─ Goes to NumericProcessor
 
-Elemento 4: "World"
+Element 4: "World"
 ├─ NumericProcessor.validate("World") → False ✗
 ├─ TextProcessor.validate("World") → True ✓
 ├─ TextProcessor.ingest("World")
-└─ Vai para TextProcessor
+└─ Goes to TextProcessor
 ```
 
-**Por que is isso polimorfismo?**
-- Mesmo código (`for proc in self._processors: proc.validate()`)
-- Comportamento diferente (cada classe implementa `validate()` à sua forma)
-- A escolha de qual método chamar acontece em **tempo de execução** (polimorfismo dinâmico)
+Why is this polymorphism?
+- Same code (`for proc in self._processors: proc.validate()`)
+- Different behavior (each class implements `validate()` in its own way)
+- The decision which method to call happens at runtime (dynamic polymorphism)
 
 ---
 
 ## 🔌 Exercise 2 - Data Pipeline
 
-### 🎯 Objetivo
-Adicionar um sistema de **plugins** para exportar dados em diferentes formatos (CSV, JSON).
+### 🎯 Goal
+Add a plugin system to export data in different formats (CSV, JSON).
 
-Usa **Duck Typing com Protocol**: "Se parece com um pato, faz quack e caminha como um pato... é um pato!"
+It uses Duck Typing with `Protocol`: "If it looks like a duck and quacks like a duck, it's a duck."
 
-### 📋 Arquitetura
+### 📋 Architecture
 
 ```
-DataStream + Processadores
+DataStream + Processors
         │
-        ├─→ output_pipeline(nb, plugin) 
+        ├─→ output_pipeline(nb, plugin)
         │
-        ├─→ CSVExportPlugin (formato CSV)
+        ├─→ CSVExportPlugin (CSV format)
         │
-        └─→ JSONExportPlugin (formato JSON)
+        └─→ JSONExportPlugin (JSON format)
 ```
 
-### 🔍 Explicação Detalhada
+### 🔍 Detailed Explanation
 
-#### 1. **Protocol ExportPlugin**
+#### 1. **ExportPlugin Protocol**
 
 ```python
 from typing import Protocol
 
 class ExportPlugin(Protocol):
     def process_output(self, data: List[Tuple[int, str]]) -> None:
-        """Qualquer classe que tenha este método 'é' um ExportPlugin"""
+        """Any class that implements this method is an ExportPlugin"""
         ...
 ```
 
-**O que é Protocol?**
-- Define uma "interface" sem herança necessária
-- É como um contrato: "Se você tem este método, você é compatível"
-- Não precisa herdar, apenas ter o mesmo método
+What is a Protocol?
+- Defines an interface without mandatory inheritance
+- It's a contract: "If you have this method, you're compatible"
+- No need to inherit, just provide the same method
 
 #### 2. **CSVExportPlugin**
 
 ```python
 class CSVExportPlugin:
     def process_output(self, data: List[Tuple[int, str]]) -> None:
-        """Exporta como CSV (Comma-Separated Values)"""
+        """Export as CSV (Comma-Separated Values)"""
         if not data:
             return
-        values = [v for _, v in data]  # Extrai só os valores
+        values = [v for _, v in data]
         print("CSV Output:")
         print(",".join(values))
 ```
 
-**Exemplo:**
+Example:
 ```python
 data = [(0, "3.14"), (1, "-1"), (2, "2.71")]
 csv_plugin.process_output(data)
@@ -342,7 +342,7 @@ csv_plugin.process_output(data)
 ```python
 class JSONExportPlugin:
     def process_output(self, data: List[Tuple[int, str]]) -> None:
-        """Exporta como JSON (key-value pairs)"""
+        """Export as JSON (key-value pairs)"""
         if not data:
             return
         items = sorted(data, key=lambda x: x[0])
@@ -354,7 +354,7 @@ class JSONExportPlugin:
         print("{" + ", ".join(parts) + "}")
 ```
 
-**Exemplo:**
+Example:
 ```python
 data = [(3, "42"), (4, "21"), (5, "32")]
 json_plugin.process_output(data)
@@ -368,7 +368,7 @@ json_plugin.process_output(data)
 
 ```python
 def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
-    """Consome nb itens de cada processador e exporta via plugin"""
+    """Consume nb items from each processor and export via plugin"""
     for proc in self._processors:
         collected: List[Tuple[int, str]] = []
         for _ in range(nb):
@@ -381,66 +381,66 @@ def output_pipeline(self, nb: int, plugin: ExportPlugin) -> None:
             plugin.process_output(collected)
 ```
 
-### 🎬 Como Funciona
+### 🎬 How It Works
 
 ```python
 ds = DataStream()
-# ... registrar e processar dados ...
+# ... register and process data ...
 
 csv_plugin = CSVExportPlugin()
 json_plugin = JSONExportPlugin()
 
-# Extrair 3 itens de cada processador e exportar em CSV
+# Extract 3 items from each processor and export as CSV
 ds.output_pipeline(3, csv_plugin)
 
-# Extrair 5 itens de cada processador e exportar em JSON
+# Extract 5 items from each processor and export as JSON
 ds.output_pipeline(5, json_plugin)
 ```
 
-**Fluxo visual:**
+Visual flow:
 ```
-Processador tem: [(0, "val0"), (1, "val1"), (2, "val2"), (3, "val3"), ...]
+Processor has: [(0, "val0"), (1, "val1"), (2, "val2"), (3, "val3"), ...]
 
 output_pipeline(3, csv_plugin):
-├─ Extrai 3 itens: [(0, "val0"), (1, "val1"), (2, "val2")]
-├─ Chama csv_plugin.process_output(...)
-└─ Output da linha vem do CSVExportPlugin
+├─ Extract 3 items: [(0, "val0"), (1, "val1"), (2, "val2")]
+├─ Calls csv_plugin.process_output(...)
+└─ Line output comes from the CSVExportPlugin
 
 output_pipeline(3, json_plugin):
-├─ Extrai 3 itens: [(3, "val3"), (4, "val4"), (5, "val5")]
-├─ Chama json_plugin.process_output(...)
-└─ Output da linha vem do JSONExportPlugin
+├─ Extract 3 items: [(3, "val3"), (4, "val4"), (5, "val5")]
+├─ Calls json_plugin.process_output(...)
+└─ Line output comes from the JSONExportPlugin
 ```
 
-### 🤔 Por que Protocol é útil?
+### 🤔 Why is Protocol useful?
 
 ```python
-# Sem Protocol, teríamos que fazer:
+# Without Protocol, we would need to do:
 class DataStream:
     def output_pipeline(self, nb: int, plugin: CSVExportPlugin | JSONExportPlugin):
-        # Teria que listar todos os tipos possíveis...
+        # Would have to enumerate all possible types...
         pass
 
-# Com Protocol, simplesmente:
+# With Protocol, simply:
 class DataStream:
     def output_pipeline(self, nb: int, plugin: ExportPlugin):
-        # Qualquer objeto que tenha process_output() funciona!
-        # Fácil adicionar novos tipos de exportação depois
+        # Any object with process_output() works!
+        # Easy to add new export types later
         pass
 ```
 
-**Duck Typing:** "Se tem o método que preciso, não me importo com o tipo!"
+**Duck Typing:** "If it has the method I need, I don't care about its type!"
 
 ---
 
-## 🔗 Resumo Técnico
+## 🔗 Technical Summary
 
-| Conceito | Onde Aparece | Propósito |
-|----------|--------------|----------|
-| **ABC (Abstract Base Class)** | Exercise 0 | Garantir que subclasses implementem métodos |
-| **Herança** | Ex0, Ex1, Ex2 | Reusar código base e especializações |
-| **Polimorfismo (Method Overriding)** | Exercise 1 | Diferentes implementações do validate/ingest |
-| **Type Hints** | Todos | Documentar tipos esperados |
-| **Protocol (Duck Typing)** | Exercise 2 | Interface sem herança obrigatória |
-| **List[Tuple[int, str]]** | Todos | Armazenar rank + valor processado |
+| Concept | Where It Appears | Purpose |
+|---------|------------------|---------|
+| **ABC (Abstract Base Class)** | Exercise 0 | Ensure subclasses implement required methods |
+| **Inheritance** | Ex0, Ex1, Ex2 | Reuse base code and provide specializations |
+| **Polymorphism (Method Overriding)** | Exercise 1 | Different implementations of validate/ingest |
+| **Type Hints** | All exercises | Document expected types |
+| **Protocol (Duck Typing)** | Exercise 2 | Interface without mandatory inheritance |
+| **List[Tuple[int, str]]** | All exercises | Store rank + processed value |
 
