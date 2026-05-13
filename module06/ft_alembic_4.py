@@ -12,6 +12,5 @@ print("This will raise an exception!")
 try:
     create_earth_fn: Any = getattr(alchemy, "create_earth")
     print("Testing the hidden create_earth: " + create_earth_fn())
-    #print(alchemy.create_earth())
 except AttributeError:
     raise
