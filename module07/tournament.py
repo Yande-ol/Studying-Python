@@ -15,7 +15,7 @@ def battle(
     creature_b,
     strat_b: ABattleStrategy,
 ) -> None:
-    print("* Battle *")
+    print("\n* Battle *")
     print(creature_a.describe())
     print("vs.")
     print(creature_b.describe())
@@ -55,7 +55,7 @@ def run_tournament(opponents: List[Tuple]):
 
 if __name__ == "__main__":
     print("Tournament 0 (basic)")
-    print("[ (Flameling+Normal), (Healing+Defensive) ]")
+    print(" [ (Flameling+Normal), (Healing+Defensive) ]")
     opponents = [
         (FlameFactory(), NormalStrategy()),
         (HealingFactory(), DefensiveStrategy()),

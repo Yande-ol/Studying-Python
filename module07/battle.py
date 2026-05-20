@@ -2,7 +2,7 @@ from ex0 import FlameFactory, AquaFactory
 
 
 def test_factory(factory) -> None:
-    print("Testing factory")
+    print("\nTesting factory")
     base = factory.create_base()
     evolved = factory.create_evolved()
     print(base.describe())
@@ -12,7 +12,7 @@ def test_factory(factory) -> None:
 
 
 def battle(f1, f2) -> None:
-    print("Testing battle")
+    print("\nTesting battle")
     a = f1.create_base()
     b = f2.create_base()
     print(a.describe())
