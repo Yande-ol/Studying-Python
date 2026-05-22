@@ -35,10 +35,10 @@ def site_packages_path(py_prefix: str) -> str:
     minor = sys.version_info.minor
     parts = (py_prefix, "lib", f"python{major}.{minor}", "site-packages")
     candidate = os.path.join(*parts)
-    return candidate
+    return str(candidate)
 
 
-def print_outside(prefix: str) -> None:
+def print_outside() -> None:
     print("Outside the Matrix")
     print("MATRIX STATUS: You are still plugged in")
     print(f"Current Python: {sys.executable}")
@@ -67,11 +67,11 @@ def print_inside(venv_path: str) -> None:
 
 def main() -> None:
     v = in_virtualenv()
-    if v:
+    if v is not None:
         print_inside(v)
     else:
         # Try to detect common system python path for display
-        print_outside(sys.prefix)
+        print_outside()
 
 
 if __name__ == "__main__":
