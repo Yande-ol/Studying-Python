@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Optional
 
 from pydantic import BaseModel, Field, ValidationError
@@ -26,9 +26,7 @@ def main() -> None:
             power_level=85.5,
             oxygen_level=92.3,
             # Quebramos a linha aqui para ficar abaixo de 79 caracteres:
-            last_maintenance=datetime.fromisoformat(
-                "2024-04-01T12:00:00"
-            ),
+            last_maintenance=datetime.now(timezone.utc),
         )
         print("Valid station created:")
         print(f"ID: {valid.station_id}")
@@ -53,7 +51,7 @@ def main() -> None:
             crew_size=25,
             power_level=50.0,
             oxygen_level=50.0,
-            last_maintenance=datetime.utcnow(),
+            last_maintenance=datetime.now(timezone.utc),
             notes=None,
         )
     except ValidationError as exc:
