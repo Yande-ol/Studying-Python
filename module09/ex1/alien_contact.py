@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Optional
 
@@ -30,7 +30,6 @@ class AlienContact(BaseModel):
         if self.contact_type is ContactType.physical and not self.is_verified:
             raise ValueError("Physical contact reports must be verified")
 
-        # Quebramos a linha 32 aqui usando parênteses na expressão lógica:
         if (
             self.contact_type is ContactType.telepathic
             and self.witness_count < 3
@@ -69,7 +68,7 @@ def main() -> None:
         print(f"Duration: {valid.duration_minutes} minutes")
         print(f"Witnesses: {valid.witness_count}")
         print(f"Message:'{valid.message_received}'")
-    except ValidationError as exc:  # pragma: no cover - demonstration
+    except ValidationError as exc:
         print(exc)
 
     print("=" * 38)
@@ -77,7 +76,7 @@ def main() -> None:
     try:
         AlienContact(
             contact_id="AC_404",
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(timezone.utc),
             location="Deep Void",
             contact_type=ContactType.telepathic,
             signal_strength=2.0,
@@ -85,7 +84,7 @@ def main() -> None:
             witness_count=1,
             message_received=None,
         )
-    except ValidationError as exc:  # pragma: no cover - demonstration
+    except ValidationError as exc:
         print(exc)
 
 
