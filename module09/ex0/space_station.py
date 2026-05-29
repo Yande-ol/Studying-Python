@@ -25,7 +25,6 @@ def main() -> None:
             crew_size=6,
             power_level=85.5,
             oxygen_level=92.3,
-            # Quebramos a linha aqui para ficar abaixo de 79 caracteres:
             last_maintenance=datetime.now(timezone.utc),
         )
         print("Valid station created:")
