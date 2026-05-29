@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import List
 
@@ -114,13 +114,12 @@ def main() -> None:
         print("Crew members:")
         for m in mission.crew:
             print(f"- {m.name} ({m.rank.value}) - {m.specialization}")
-    except ValidationError as exc:  # pragma: no cover - demonstration
+    except ValidationError as exc:
         print(exc)
 
     print("=" * 40)
     print("Expected validation error:")
     try:
-        # invalid mission: no commander/captain
         bad_crew = [
             CrewMember(
                 member_id="C1",
@@ -135,7 +134,7 @@ def main() -> None:
             mission_id="X100",
             mission_name="Test",
             destination="Luna",
-            launch_date=datetime.utcnow(),
+            launch_date=datetime.now(timezone.utc),
             duration_days=10,
             crew=bad_crew,
             budget_millions=10.0,
