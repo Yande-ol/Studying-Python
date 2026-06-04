@@ -59,5 +59,6 @@ if __name__ == '__main__':
     print('Testing memory vault...')
     mv = memory_vault()
     mv['store']('secret', 42)
+    print("Store 'secret':", mv['recall']('secret'))
     print("Recall 'secret':", mv['recall']('secret'))
     print("Recall 'unknown':", mv['recall']('unknown'))

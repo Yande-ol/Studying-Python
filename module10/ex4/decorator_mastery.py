@@ -20,12 +20,9 @@ def power_validator(min_power: int) -> Callable:
     def decorator(func: Callable) -> Callable:
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any):
-            # extract 'power' from kwargs or positional args
             if 'power' in kwargs:
                 power = kwargs.get('power')
             else:
-                # handle both standalone functions (target, power)
-                # and methods (self, spell_name, power)
                 if len(args) >= 2 and isinstance(args[1], int):
                     power = args[1]
                 elif len(args) >= 3 and isinstance(args[2], int):
@@ -80,24 +77,28 @@ class MageGuild:
 
 
 if __name__ == '__main__':
+    print('Testing spell timer...')
     @spell_timer
     def fireball():
-        time.sleep(0.05)
+        time.sleep(0.101)
         return 'Fireball cast!'
-
-    print('Testing spell timer...')
     print('Result:', fireball())
 
+    print('Testing retrying spell...')
     @retry_spell(3)
     def flaky():
         raise RuntimeError('boom')
-
-    print('Testing retrying spell...')
     print(flaky())
 
+    @retry_spell(3)
+    def waaaaagh():
+        return 'Waaaaaaagh spelled !'
+    print(waaaaagh())
+
     print('Testing MageGuild...')
-    print(MageGuild.validate_mage_name('Al'))
     print(MageGuild.validate_mage_name('Gandalf'))
+    print(MageGuild.validate_mage_name('Al'))
+    
     g = MageGuild()
     print(g.cast_spell('Lightning', 15))
     print(g.cast_spell('TinySpark', 5))
