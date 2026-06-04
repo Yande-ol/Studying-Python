@@ -78,6 +78,7 @@ class MageGuild:
 
 if __name__ == '__main__':
     print('Testing spell timer...')
+
     @spell_timer
     def fireball():
         time.sleep(0.101)
@@ -85,6 +86,7 @@ if __name__ == '__main__':
     print('Result:', fireball())
 
     print('Testing retrying spell...')
+
     @retry_spell(3)
     def flaky():
         raise RuntimeError('boom')
@@ -98,7 +100,7 @@ if __name__ == '__main__':
     print('Testing MageGuild...')
     print(MageGuild.validate_mage_name('Gandalf'))
     print(MageGuild.validate_mage_name('Al'))
-    
+
     g = MageGuild()
     print(g.cast_spell('Lightning', 15))
     print(g.cast_spell('TinySpark', 5))
