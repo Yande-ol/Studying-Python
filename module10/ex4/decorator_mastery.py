@@ -52,8 +52,13 @@ def retry_spell(max_attempts: int) -> Callable:
                 except Exception:
                     attempts += 1
                     if attempts < max_attempts:
-                        print(f'Spell failed, retrying... (attempt {attempts}/{max_attempts})')
-            return f'Spell casting failed after {max_attempts} attempts'
+                        print(
+                            f'Spell failed, retrying... '
+                            f'(attempt {attempts}/{max_attempts})'
+                        )
+            return (
+                f'Spell casting failed after {max_attempts} attempts'
+            )
 
         return wrapper
 
@@ -63,7 +68,11 @@ def retry_spell(max_attempts: int) -> Callable:
 class MageGuild:
     @staticmethod
     def validate_mage_name(name: str) -> bool:
-        return isinstance(name, str) and len(name) >= 3 and all(c.isalpha() or c.isspace() for c in name)
+        return (
+            isinstance(name, str)
+            and len(name) >= 3
+            and all(c.isalpha() or c.isspace() for c in name)
+        )
 
     @power_validator(10)
     def cast_spell(self, spell_name: str, power: int) -> str:

@@ -1,6 +1,3 @@
-from typing import Any
-
-
 def artifact_sorter(artifacts: list[dict]) -> list[dict]:
     return sorted(artifacts, key=lambda a: a.get('power', 0), reverse=True)
 
@@ -28,7 +25,10 @@ if __name__ == '__main__':
     artifacts = [{'name': 'Fire Staff', 'power': 92, 'type': 'staff'},
                  {'name': 'Crystal Orb', 'power': 85, 'type': 'orb'}]
     sorted_a = artifact_sorter(artifacts)
-    print(f"{sorted_a[0]['name']} ({sorted_a[0]['power']} power) comes before {sorted_a[1]['name']} ({sorted_a[1]['power']} power)")
+    print(
+        f"{sorted_a[0]['name']} ({sorted_a[0]['power']} power) comes before "
+        f"{sorted_a[1]['name']} ({sorted_a[1]['power']} power)"
+    )
     print('Testing spell transformer...')
     spells = ['fireball', 'heal', 'shield']
     print(' '.join(spell_transformer(spells)))

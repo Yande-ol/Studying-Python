@@ -6,17 +6,15 @@ import operator
 def spell_reducer(spells: list[int], operation: str) -> int:
     if not spells:
         return 0
-    ops = {
-        'add': operator.add,
-        'multiply': operator.mul,
-        'max': max,
-        'min': min,
-    }
-    if operation not in ops:
+    if operation not in {'add', 'multiply', 'max', 'min'}:
         raise ValueError('Unknown operation')
-    if operation in ('max', 'min'):
-        return ops[operation](spells)
-    return reduce(ops[operation], spells)
+    if operation == 'max':
+        return max(spells)
+    if operation == 'min':
+        return min(spells)
+    if operation == 'add':
+        return reduce(operator.add, spells)
+    return reduce(operator.mul, spells)
 
 
 def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
